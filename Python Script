@@ -1,0 +1,43 @@
+#Import the ArcPy site package and env class.
+import arcpy
+from arcpy import env
+ 
+#Set the environments.
+env.workspace = arcpy.GetParameterAsText(0)
+env.overwriteOutput = True
+ 
+#Create the variables.
+national_park = arcpy.GetParameterAsText(1)
+campsites = arcpy.GetParameterAsText(2)
+campsites_buf = "Campsites_Buffer.shp"
+trails = arcpy.GetParameterAsText(3)
+trails_buf = "Trails_Buffer.shp"
+roads = arcpy.GetParameterAsText(4)
+selected_roads = "Selected_roads.shp"
+selected_roads_buf = "Selected_roads_Buffer.shp"
+wilderness_merge = "Wilderness_merge.shp"
+expression = arcpy.GetParameterAsText(5)
+ 
+#Select paved roads only
+arcpy.analysis.Select("Roads_and_Rail.shp", selected_roads, expression)
+arcpy.AddMessage("The paved roads have been selected.")
+ 
+#Buffer the paved roads
+arcpy.analysis.Buffer(selected_roads, selected_roads_buf, "2000 feet")
+arcpy.AddMessage("The paved roads have been buffered.")
+ 
+#Buffer the campsites
+arcpy.analysis.Buffer(campsites, campsites_buf, "500 feet")
+arcpy.AddMessage("The campsites have been buffered.")
+ 
+#Buffer the trails
+arcpy.analysis.Buffer(trails, trails_buf, "100 feet")
+arcpy.AddMessage("The trails have been buffered.")
+ 
+#Merge the buffer shapefiles
+arcpy.management.Merge([selected_roads_buf, campsites_buf, trails_buf], wilderness_merge)
+arcpy.AddMessage("The buffers have been merged.")
+ 
+#Erase the merged buffers
+arcpy.analysis.Erase(national_park, wilderness_merge, 'Wilderness_Erased.shp')
+arcpy.AddMessage("The merged areas at the national park have been erased.")
