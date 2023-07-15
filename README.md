@@ -1,2 +1,4 @@
 # Custom-Tool-Script
 Custom tool script in ArcGIS featuring the select, buffer, merge, and erase tools.
+
+This script is for a custom tool in ArcGIS Pro that finds the wilderness areas of a national park, which are defined as: 2,000 ft away from a paved road, 500 ft away from any campsite, and 100 ft away from a trail. It uses the arcpy.GetParameterAsText() function to have the user of the custom tool input the workspace, the national park, campsites, trails, roads, and the SQL expression. It then uses the select tool to select paved roads only, and then buffer the paved roads, campsites, and trails. It merges those buffers together, and then uses the erase function to erase the merged areas, leaving only the wilderness areas left. It prints a message to the user using the AddMessage() function letting them know once each of those functions have been completed.
